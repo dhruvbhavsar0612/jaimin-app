@@ -1,6 +1,9 @@
 import streamlit as st
 from inference import predict
-from PIL import image
+from PIL import Image
+import tensorflow as tf
+
+model = tf.keras.models.load_model('./model/model.keras')
 
 st.title("Sweetcorn Worm Classification")
 st.write("Upload an image of a sweetcorn worm to classify it.")
@@ -16,7 +19,7 @@ if uploaded_file is not None:
     st.image(image, caption='Uploaded Image', use_column_width=True)
 
     # Make predictions
-    class_label, confidence = predict(image)
+    class_label, confidence = predict(model,image)
 
     # Display the predictions
     st.write("Prediction:")

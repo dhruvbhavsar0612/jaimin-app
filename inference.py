@@ -1,6 +1,7 @@
 from keras.models import load_model
+import numpy as np
+import tensorflow as tf
 
-model = tf.keras.models.load_model('my_model2.hdf5')
 
 
 def preprocess_image(image):
@@ -11,10 +12,12 @@ def preprocess_image(image):
     return img
 
 # Make predictions on the input image
-def predict(image):
-    processed_image = preprocess_image(image)
-    predictions = model.predict(processed_image)
-    class_index = np.argmax(predictions)
-    class_label = ['corn_earworm', 'fall_armyworm'][class_index]
-    confidence = predictions[0][class_index] * 100
-    return class_label, confidence
+def predict(model,image):
+    img_array = tf.keras.preprocessing.image.img_to_array(image)
+    img_array = tf.expand_dims(img_array,0) # create a batch
+    
+    predictions = model.predict(img_array)
+    class_name = ['corn_earworm', 'fall_armyworm']
+    predicted_class = class_name[np.argmax(predictions[0])]
+    confidence = round(100 * (np.max(predictions[0])),2)
+    return predicted_class, confidence
